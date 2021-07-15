@@ -63,6 +63,6 @@ namespace Better939
         public bool EnableAreaAmnesia { get; set; } = false;
 
         [Description("The area in which humans get the amnesia effect")]
-        public int AreaAmnesia { get; set; } = 3;
+        public int AreaAmnesia { get; set; } = 10;
     }
 }

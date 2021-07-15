@@ -96,7 +96,7 @@ namespace Better939
             {
                 foreach (Player players in Server.Get.Players)
                 {
-                    if(players != player)
+                    if(players != player && players.Team != Team.SCP)
                     {
                         if (Vector3.Distance(players.Position, player.Position) <= Plugin.Config.AreaAmnesia)
                             players.PlayerEffectsController.EnableEffect<Amnesia>(3);

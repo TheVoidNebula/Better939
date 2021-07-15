@@ -9,7 +9,7 @@ namespace Better939
 {
     [PluginInformation(
         Author = "TheVoidNebula",
-        Description = "A complett rework from our favorite doggo scp.",
+        Description = "A complett rework from our favorite doggo scp",
         LoadPriority = 0,
         Name = "Better939",
         SynapseMajor = 2,
