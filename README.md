@@ -18,7 +18,7 @@ A complett rework from our favorite doggo scp
 
 ## Commands
 Command  | Usage | Description 
------------- | ------------ | ------------ | ------------ 
+------------ |  ------------ | ------------ 
 `Decoy` | `.decoy` or `mouse2 (Rightclick)` | Deploy a fake SCP-939 corpse and become for some seconds a ghost
 
 ## Config
