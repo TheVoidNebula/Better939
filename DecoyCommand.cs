@@ -22,7 +22,9 @@ namespace Better939
     public class DecoyCommand : ISynapseCommand
     {
 
-        public HashSet<Player> inCooldown = new HashSet<Player>();
+        public static HashSet<Player> inCooldown = new HashSet<Player>();
+        public static HashSet<Player> inDecoyMode = new HashSet<Player>();
+
         public CommandResult Execute(CommandContext context)
         {
             var result = new CommandResult();
@@ -34,7 +36,6 @@ namespace Better939
                 {
                     EventHandlers.Coroutines.Add(Timing.RunCoroutine(Decoy(player)));
                     EventHandlers.Coroutines.Add(Timing.RunCoroutine(DecoyCooldown(player)));
-                    inCooldown.Add(player);
                     result.Message = "[Better939] You successfully enabled your decoy!";
                     result.State = CommandResultState.Ok;
                     return result;
@@ -55,28 +56,29 @@ namespace Better939
             }
         }
 
-        public IEnumerator<float> Decoy(Player player)
+        public static IEnumerator<float> Decoy(Player player)
         {
+            inDecoyMode.Add(player);
+            inCooldown.Add(player);
             player.SendBroadcast(5, Plugin.Config.DecoyMessage);
             Synapse.Api.Ragdoll rag = new Synapse.Api.Ragdoll(player.RoleType, player.Position, Quaternion.identity, Vector3.zero, new PlayerStats.HitInfo(), false, player);
             player.GodMode = true;
             player.Invisible = true;
-            player.PlayerEffectsController.EnableEffect<Ensnared>(Plugin.Config.DecoyTime);
+            player.PlayerEffectsController.EnableEffect<Disabled>(Plugin.Config.DecoyTime);
             Map.Get.AnnounceScpDeath("9 3 9");
-            yield return Timing.WaitForSeconds(Plugin.Config.DecoyTime);
-            if (rag != null) rag.Destroy();
-            player.GodMode = false;
-            player.Invisible = false;
-
             if (Map.Get.Nuke.Detonated)
             {
                 yield return Timing.WaitForSeconds(0.1f);
                 player.Hurt(99999);
             }
-            
+            yield return Timing.WaitForSeconds(Plugin.Config.DecoyTime);
+            if (rag != null) rag.Destroy();
+            player.GodMode = false;
+            player.Invisible = false;
+            inDecoyMode.Remove(player);
         }
 
-        public IEnumerator<float> DecoyCooldown(Player player)
+        public static IEnumerator<float> DecoyCooldown(Player player)
         {
             yield return Timing.WaitForSeconds(Plugin.Config.DecoyCooldown);
             inCooldown.Remove(player);

@@ -19,9 +19,12 @@ namespace Better939
         {
             Server.Get.Events.Round.RoundEndEvent += OnRoundEnd;
             Server.Get.Events.Player.PlayerSetClassEvent += OnSetClass;
+            Server.Get.Events.Player.PlayerLeaveEvent += OnLeave;
             Server.Get.Events.Player.PlayerDeathEvent += OnDeath;
             Server.Get.Events.Player.PlayerDamageEvent += OnDamage;
             Server.Get.Events.Player.PlayerItemUseEvent += OnItemInteract;
+            Server.Get.Events.Player.PlayerKeyPressEvent += OnKeyPress;
+            Server.Get.Events.Map.DoorInteractEvent += OnDoorInteract;
         }
 
         public static bool is939(Player player)
@@ -32,26 +35,57 @@ namespace Better939
                 return false;
         }
 
-        public void OnRoundEnd()
-        {
-            Timing.KillCoroutines(Coroutines.ToArray());
+        public void OnRoundEnd() => Timing.KillCoroutines(Coroutines.ToArray());
   
-        }
+        
 
         public void OnSetClass(PlayerSetClassEventArgs ev)
         {
             Player player = ev.Player;
+            if (DecoyCommand.inCooldown.Contains(player))
+                DecoyCommand.inCooldown.Remove(player);
+
+            if (DecoyCommand.inDecoyMode.Contains(player))
+                DecoyCommand.inDecoyMode.Remove(player);
             if (ev.Role == RoleType.Scp93953 || ev.Role == RoleType.Scp93989)
             {
                 player.Health = Plugin.Config.Health;
                 player.MaxHealth = Plugin.Config.Health;
-                Coroutines.Add(Timing.RunCoroutine(StartAreaAmnesia(player)));
+                player.GiveTextHint(Plugin.Config.SpawnMessage, 10);
+                if(Plugin.Config.EnableAreaAmnesia)
+                    Coroutines.Add(Timing.RunCoroutine(StartAreaAmnesia(player)));
+                if (Plugin.Config.EnableScp207Speed)
+                    Timing.CallDelayed(1f, () => player.PlayerEffectsController.EnableEffect<Scp207>(Plugin.Config.Scp207SpeedMultiplier - 1));
             }
-  
         }
+
+        public void OnLeave(PlayerLeaveEventArgs ev)
+        {
+            Player player = ev.Player;
+            if (DecoyCommand.inCooldown.Contains(player))
+                DecoyCommand.inCooldown.Remove(player);
+
+            if (DecoyCommand.inDecoyMode.Contains(player))
+                DecoyCommand.inDecoyMode.Remove(player);
+        }
+
+        public void OnKeyPress(PlayerKeyPressEventArgs ev)
+        {
+            Player player = ev.Player;   
+            if(ev.KeyCode == KeyCode.Mouse2 && is939(player) && !DecoyCommand.inDecoyMode.Contains(player))
+            {
+                Coroutines.Add(Timing.RunCoroutine(DecoyCommand.Decoy(player)));
+                Coroutines.Add(Timing.RunCoroutine(DecoyCommand.DecoyCooldown(player)));
+            }
+            else if (ev.KeyCode == KeyCode.Mouse2 && is939(player) && DecoyCommand.inDecoyMode.Contains(player))
+                player.GiveTextHint(Plugin.Config.DecoyInCooldownMessage);
+            
+        }
+
         public void OnDeath(PlayerDeathEventArgs ev)
         {
             Player killer = ev.Killer;
+            Player victim = ev.Victim;
             float missingHealthKiller = killer.MaxHealth - killer.Health;
             if (is939(killer))
             {
@@ -63,6 +97,12 @@ namespace Better939
                         killer.Health += killer.MaxHealth;
                 }       
             }
+
+            if (DecoyCommand.inCooldown.Contains(victim))
+                DecoyCommand.inCooldown.Remove(victim);
+
+            if (DecoyCommand.inDecoyMode.Contains(victim))
+                DecoyCommand.inDecoyMode.Remove(victim);
         }
 
         public void OnDamage(PlayerDamageEventArgs ev)
@@ -78,7 +118,17 @@ namespace Better939
                     victim.GiveTextHint(Plugin.Config.PoisonMessage);
                 }
                 ev.DamageAmount = Plugin.Config.Damage;
+
+                if (DecoyCommand.inDecoyMode.Contains(attacker))
+                    ev.Allow = false;
+                else
+                    ev.Allow = true;
             }
+
+            if (is939(victim) && Plugin.Config.EnableScp207Speed && ev.HitInfo.GetDamageType() == DamageTypes.Scp207)
+                ev.Allow = false;
+            else
+                ev.Allow = true;
         }
 
         public void OnItemInteract(PlayerItemInteractEventArgs ev)
@@ -90,9 +140,23 @@ namespace Better939
             }
         }
 
+        public void OnDoorInteract(DoorInteractEventArgs ev)
+        {
+            Player player = ev.Player;
+
+            if (DecoyCommand.inDecoyMode.Contains(player) && !Plugin.Config.EnableDecoyDoor && is939(player))
+            {
+                ev.Allow = false;
+                player.GiveTextHint(Plugin.Config.DecoyDoorMesssage);
+            }
+            else
+                ev.Allow = true;
+                
+        }
+
         public IEnumerator<float> StartAreaAmnesia(Player player)
         {
-            while (is939(player))
+            while (is939(player) && !DecoyCommand.inDecoyMode.Contains(player))
             {
                 foreach (Player players in Server.Get.Players)
                 {
