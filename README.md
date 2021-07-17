@@ -16,6 +16,10 @@ A complett rework from our favorite doggo scp
 2. Place the Better939.dll file that you can download [here](https://github.com/TheVoidNebula/Better939/releases) in your plugin directory
 3. Restart/Start your server.
 
+## Commands
+Command  | Usage | Description 
+------------ | ------------ | ------------ | ------------ 
+`Decoy` | `.decoy` or `mouse2 (Rightclick)` | Deploy a fake SCP-939 corpse and become for some seconds a ghost
 
 ## Config
 Name  | Type | Default | Description
@@ -23,6 +27,9 @@ Name  | Type | Default | Description
 `IsEnabled` | Boolean | true | Is this plugin enabled?
 `Health` | Int | 2200 | With how much health should SCP-939 spawn?
 `Damage` | Int | 65 | How much damage should SCP-939 deal per hit?
+`SpawnMessage` | String | too long to show here | The spawn message for SCP-939
+`EnableScp207Speed` | Boolean | true | Should SCP-939 has SCP-207 speed effects?
+`Scp207SpeedMultiplier` | Int | 1 | How much SCP-207 should SCP-939 have? (Between 1 and 4)    
 `EnableHealthOnKill` | Boolean | false | Should SCP-939 gain Health on a kill?
 `EnableOverheal` | Boolean | false | Should SCP-939 get health higer than his max health?
 `HealthOnKill` | Int | true | The Amount of health SCP-939 gains on a kill
@@ -36,6 +43,8 @@ Name  | Type | Default | Description
 `DecoyInCooldownMessage` | String | '[Better939] You cannot use your decoy yet' | What should the message be when you try to use the decoy command while being in cooldown?
 `DecoyMessage` | String | '[Better939] You have enabled your decoy!' | What should the message be when you enable your decoy?
 `DecoyTime` | Float | 10f | How long should the decoy be active?
+`EnableDecoyDoor` | Boolean | false | Should SCP-939 be able to interact with doors while in door mode? false = not
+`DecoyDoorMesssage` | String | '[Better939] You cannot interact while in decoy mode!' | What should the message be when you try to open a door?      
 `EnableAreaAmnesia` | Boolean | false | Should humans get the amnesia effect if they are in the close proximity of SCP-939?
 `AreaAmnesia` | Int | 10 | The area in which humans get the amnesia effect
 
