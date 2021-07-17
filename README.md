@@ -59,10 +59,29 @@ isEnabled: true
 health: 2200
 # How much damage should SCP-939 deal per hit?
 damage: 65
+# The spawn message for SCP-939
+spawnMessage: >-
+  ::lcb::Better939::rcb:: You are <color=red>SCP-939</color>!
+
+
+  You gain health as you <color=red>kill humans</color>.
+
+
+  Your bite <color=red>poisons humans</color>.
+
+
+  You have a <color=red>active</color> ability which you can enable with a rightclick or with .decoy in console.
+
+
+  You also also have a <color=red>passive</color> ability in which humans get amnesia when they get to close to you.
+# Should SCP-939 has SCP-207 speed effects?
+enableScp207Speed: true
+# How much SCP-207 should SCP-939 have? (Between 1 and 4)
+scp207SpeedMultiplier: 1
 # Should SCP-939 gain Health on a kill?
 enableHealthOnKill: true
 # Should SCP-939 get health higer than his max health?
-enableOverheal: true
+enableOverheal: false
 # The Amount of health SCP-939 gains on a kill
 healthOnKill: 20
 # Should SCP-939 give the victim the poison effect?
@@ -83,7 +102,7 @@ healMessage: '::lcb::Better939::rcb:: You have stopped the poison'
 # Should SCP-939 be able to fake his death with a ragdoll?
 enableDecoyCommand: true
 # How long should the cooldown be after the usage of the decoy command?
-decoyCooldown: 30
+decoyCooldown: 120
 # What should the message be when you can use the decoy command again after the end of the cooldown?
 decoyCooldownMessage: '::lcb::Better939::rcb:: You can use your Decoy again'
 # What should the message be when you try to use the decoy command while being in cooldown?
@@ -92,10 +111,13 @@ decoyInCooldownMessage: '::lcb::Better939::rcb:: You cannot use your decoy yet'
 decoyMessage: '::lcb::Better939::rcb:: You have enabled your decoy!'
 # How long should the decoy be active?
 decoyTime: 10
+# Should SCP-939 be able to interact with doors while in door mode? false = not
+enableDecoyDoor: false
+# What should the message be when you try to open a door?
+decoyDoorMesssage: '::lcb::Better939::rcb:: You cannot interact while in decoy mode!'
 # Should humans get the amnesia effect if they are in the close proximity of SCP-939?
-enableAreaAmnesia: true
+enableAreaAmnesia: false
 # The area in which humans get the amnesia effect
 areaAmnesia: 10
-}hMessage: '::lcb::ExplosiveSCPS::rcb:: <color=red>Your death caused a big explosion!</color>'
 }
 ```
